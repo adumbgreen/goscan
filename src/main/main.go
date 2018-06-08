@@ -14,7 +14,7 @@ import (
     "context"
     "os"
     "strings"
-    manuf "github.com/timest/gomanuf"
+    "github.com/timest/gomanuf"
     "flag"
 )
 
