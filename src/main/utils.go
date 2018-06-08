@@ -1,3 +1,7 @@
+/*
+This file has been modified.
+*/
+
 package main
 
 type Buffer struct {
@@ -20,7 +24,7 @@ func NewBuffer() *Buffer {
     }
 }
 
-// 反转字符串
+// Reverse the string
 func Reverse(s string) (result string) {
     for _, v := range s {
         result = string(v) + result

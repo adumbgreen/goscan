@@ -1,3 +1,7 @@
+/*
+This file has been modified.
+*/
+
 package main
 
 import (
@@ -14,7 +18,7 @@ import (
 func listenARP(ctx context.Context) {
     handle, err := pcap.OpenLive(iface, 1024, false, 10 * time.Second)
     if err != nil {
-        log.Fatal("pcap打开失败:", err)
+        log.Fatal("Pcap failed to open:", err)
     }
     defer handle.Close()
     handle.SetBPFFilter("arp")
@@ -39,15 +43,15 @@ func listenARP(ctx context.Context) {
     }
 }
 
-// 发送arp包
-// ip 目标IP地址
+// send arp packets
+// ip - target IP address
 func sendArpPackage(ip IP) {
     srcIp := net.ParseIP(ipNet.IP.String()).To4()
     dstIp := net.ParseIP(ip.String()).To4()
     if srcIp == nil || dstIp == nil {
-        log.Fatal("ip 解析出问题")
+        log.Fatal("Ip parsing problem")
     }
-    // 以太网首部
+    // Ethernet header
     // EthernetType 0x0806  ARP
     ether := &layers.Ethernet{
         SrcMAC: localHaddr,
@@ -74,13 +78,13 @@ func sendArpPackage(ip IP) {
     
     handle, err := pcap.OpenLive(iface, 2048, false, 30 * time.Second)
     if err != nil {
-        log.Fatal("pcap打开失败:", err)
+        log.Fatal("Pcap failed to open:", err)
     }
     defer handle.Close()
     
     err = handle.WritePacketData(outgoingPacket)
     if err != nil {
-        log.Fatal("发送arp数据包失败..")
+        log.Fatal("Failed to send arp packets..")
     }
 }
 

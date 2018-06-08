@@ -1,3 +1,7 @@
+/*
+This file has been modified.
+*/
+
 package main
 
 import (
@@ -10,7 +14,7 @@ import (
 
 type IP uint32
 
-// 将 IP(uint32) 转换成 可读性IP字符串
+// IP(uint32) Convert to readable IP strings
 func (ip IP) String() string {
     var bf bytes.Buffer
     for i := 1; i <= 4; i++ {
@@ -22,10 +26,10 @@ func (ip IP) String() string {
     return bf.String()
 }
 
-// 根据IP和mask换算内网IP范围
+// IP address and mask are used to convert the intranet IP range
 func Table(ipNet *net.IPNet) []IP {
     ip := ipNet.IP.To4()
-    log.Info("本机ip:", ip)
+    log.Info("Native ip:", ip)
     var min, max IP
     var data []IP
     for i := 0; i < 4; i++ {
@@ -34,9 +38,9 @@ func Table(ipNet *net.IPNet) []IP {
     }
     one, _ := ipNet.Mask.Size()
     max = min | IP(math.Pow(2, float64(32 - one)) - 1)
-    log.Infof("内网IP范围:%s --- %s", min, max)
-    // max 是广播地址，忽略
-    // i & 0x000000ff  == 0 是尾段为0的IP，根据RFC的规定，忽略
+    log.Infof("Intranet IP range:%s --- %s", min, max)
+    // Max is the broadcast address, ignored
+    // i & 0x000000ff  == 0 IP that is 0 in the trailing segment, ignored by RFC
     for i := min; i < max; i++ {
         if i & 0x000000ff == 0 {
             continue
@@ -61,7 +65,7 @@ func ParseIPString(s string) IP{
     return ParseIP(b)
 }
 
-// IPSlice ，实现了sort的排序接口
+// IPSlice ，Sorting interface is implemented
 type IPSlice []IP
 func (ip IPSlice) Len() int { return len(ip) }
 func (ip IPSlice) Swap(i, j int) {

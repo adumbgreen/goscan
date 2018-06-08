@@ -1,3 +1,8 @@
+# This file has been modified.
+
+.DS_Store
+.idea
+
 # Binaries for programs and plugins
 *.exe
 *.dll
