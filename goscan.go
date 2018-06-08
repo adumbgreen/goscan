@@ -149,14 +149,17 @@ func sendARP() {
     }
 }
 
+//export GetDefaultScanResults
 func GetDefaultScanResults() []ScanResult {
     return GetCustomScanResults("", false)
 }
 
+//export GetDefaultScanResultsVerbose
 func GetDefaultScanResultsVerbose() []ScanResult {
     return GetCustomScanResults("", true)
 }
 
+//export GetCustomScanResults
 func GetCustomScanResults(paramIface string, verbose bool) []ScanResult{
     if verbose {
         log.Level = logrus.InfoLevel
