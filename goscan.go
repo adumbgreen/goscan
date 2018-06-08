@@ -8,14 +8,12 @@ import (
     "net"
     "github.com/Sirupsen/logrus"
     "time"
-    "fmt"
     "sync"
     "sort"
     "context"
     "os"
     "strings"
     "github.com/timest/gomanuf"
-    "flag"
 )
 
 var log = logrus.New()
@@ -48,7 +46,16 @@ type Info struct {
 // Format the output
 // xxx.xxx.xxx.xxx  xx:xx:xx:xx:xx:xx  hostname  manuf
 // xxx.xxx.xxx.xxx  xx:xx:xx:xx:xx:xx  hostname  manuf
-func PrintData() {
+
+type ScanResult struct {
+    IPAddress string
+    MACAddress string
+    Hostname string
+    Manufacturer string
+}
+
+func GetData() []ScanResult {
+    var result []ScanResult
     var keys IPSlice
     for k := range data {
         keys = append(keys, ParseIPString(k))
@@ -60,8 +67,10 @@ func PrintData() {
         if d.Mac != nil {
             mac = d.Mac.String()
         }
-        fmt.Printf("%-15s %-17s %-30s %-10s\n", k.String(), mac, d.Hostname, d.Manuf)
+        result = append(result, ScanResult{k.String(), mac, d.Hostname, d.Manuf})
     }
+
+    return result
 }
 
 // Add the captured data set to data and reset the timer
@@ -140,14 +149,25 @@ func sendARP() {
     }
 }
 
-func main() {
-    flag.StringVar(&iface, "I", "", "Network interface name")
-    flag.Parse()
+func GetDefaultScanResults() []ScanResult {
+    return GetCustomScanResults("", false)
+}
+
+func GetDefaultScanResultsVerbose() []ScanResult {
+    return GetCustomScanResults("", true)
+}
+
+func GetCustomScanResults(paramIface string, verbose bool) []ScanResult{
+    if verbose {
+        log.Level = logrus.InfoLevel
+    } else {
+        log.Level = logrus.WarnLevel
+    }
     // initialization data
     data = make(map[string]Info)
     do = make(chan string)
     // Initialize network information
-    setupNetInfo(iface)
+    setupNetInfo(paramIface)
     
     ctx, cancel := context.WithCancel(context.Background())
     go listenARP(ctx)
@@ -157,10 +177,11 @@ func main() {
     go localHost()
     
     t = time.NewTicker(4 * time.Second)
+    var result []ScanResult
     for {
         select {
         case <-t.C:
-            PrintData()
+            result = GetData()
             cancel()
             goto END
         case d := <-do:
@@ -174,6 +195,8 @@ func main() {
         }
     }
     END:
-    
+    return result
 }
 
+// required, but not used
+func main() { }

@@ -2,6 +2,7 @@
 
 .DS_Store
 .idea
+main
 
 # Binaries for programs and plugins
 *.exe
