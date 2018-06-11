@@ -1,10 +1,43 @@
 package main
 
+import "C"
+
 import (
     "github.com/Sirupsen/logrus"
     "time"
     "context"
+    "sort"
 )
+
+// Format the output
+// xxx.xxx.xxx.xxx  xx:xx:xx:xx:xx:xx  hostname  manuf
+// xxx.xxx.xxx.xxx  xx:xx:xx:xx:xx:xx  hostname  manuf
+
+type ScanResult struct {
+    IPAddress string
+    MACAddress string
+    Hostname string
+    Manufacturer string
+}
+
+func GetData() []ScanResult {
+    var result []ScanResult
+    var keys IPSlice
+    for k := range data {
+        keys = append(keys, ParseIPString(k))
+    }
+    sort.Sort(keys)
+    for _, k := range keys {
+        d := data[k.String()]
+        mac := ""
+        if d.Mac != nil {
+            mac = d.Mac.String()
+        }
+        result = append(result, ScanResult{k.String(), mac, d.Hostname, d.Manuf})
+    }
+
+    return result
+}
 
 //export GetDefaultScanResults
 func GetDefaultScanResults() []ScanResult {
