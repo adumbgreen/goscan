@@ -84,6 +84,7 @@ func setupNetInfo(f string) {
     }
     if err != nil {
         log.Fatal("Unable to get local network information:", err)
+        goto END
     }
     for _, it := range ifs {
         addr, _ := it.Addrs()
